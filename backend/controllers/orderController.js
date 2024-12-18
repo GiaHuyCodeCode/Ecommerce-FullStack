@@ -100,6 +100,7 @@ const verifyStripe = async (req, res) => {
     if (success === "true") {
       await orderModel.findByIdAndUpdate(orderId, { payment: true });
       await userModel.findByIdAndUpdate(userId, { cartData: {} });
+      res.json({ success: true });
     } else {
       await orderModel.findByIdAndDelete(orderId);
       res.json({ success: false });
