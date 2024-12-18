@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import productModel from "../models/productModel.js";
+import orderModel from "../models/orderModel.js";
 
 // function for add product
 const addProduct = async (req, res) => {
@@ -89,4 +90,54 @@ const singleProduct = async (req, res) => {
   }
 };
 
-export { addProduct, listProduct, removeProduct, singleProduct };
+// Function for dashboard statistics
+const addDashboard = async (req, res) => {
+  try {
+    // Total number of products
+    const totalProducts = await productModel.countDocuments();
+
+    // Orders data
+    const orders = await orderModel.find({});
+
+    // Total revenue
+    const totalRevenue = orders.reduce(
+      (total, order) => total + order.amount,
+      0
+    );
+
+    // Pending orders
+    const pendingOrders = orders.filter(
+      (order) => order.status === "Order Placed" || order.status === "Pending"
+    ).length;
+
+    // Orders grouped by status
+    const ordersByStatus = orders.reduce((acc, order) => {
+      acc[order.status] = (acc[order.status] || 0) + 1;
+      return acc;
+    }, {});
+
+    // Get recent orders (last 5 orders)
+    const recentOrders = await orderModel
+      .find({})
+      .sort({ date: -1 }) // Sort by most recent
+      .limit(5)
+      .select("userId amount status date"); // Select only necessary fields
+
+    // Format statistics for the response
+    const statistics = {
+      totalProducts,
+      totalRevenue,
+      pendingOrders,
+      ordersByStatus,
+      recentOrders,
+    };
+
+    // Send response
+    res.json({ success: true, statistics });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export { addDashboard, addProduct, listProduct, removeProduct, singleProduct };

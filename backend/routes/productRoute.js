@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  addDashboard,
   addProduct,
   listProduct,
   removeProduct,
@@ -24,5 +25,6 @@ productRouter.post(
 productRouter.post("/remove", adminAuth, removeProduct);
 productRouter.post("/single", singleProduct);
 productRouter.get("/list", listProduct);
+productRouter.get("/dashboard", adminAuth, addDashboard);
 
 export default productRouter;
