@@ -33,7 +33,7 @@ const Footer = () => {
       <div>
         <hr />
         <p className="py-5 text-sm text-center">
-          Copyright 2022 GiaHuyCodeCode. All rights reserved.
+          Copyright 2024 GiaHuyCodeCode. All rights reserved.
         </p>
       </div>
     </div>
